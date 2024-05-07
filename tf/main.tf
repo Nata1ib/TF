@@ -9,24 +9,9 @@ required_version = ">= 0.14.0"
   }
 }
 
-# Configure the Vault Provider by $VAULT_ADDR and $VAULT_TOKEN
-provider "vault" {}
-
-data "vault_kv_secret_v2" "auth_secret" {
-  mount = "kv"
-  name  = "openstack-auth"
-}
-
-# Configure the OpenStack Provider
-provider "openstack" {
-  user_name   = data.vault_kv_secret_v2.auth_secret.data["username"]
-  tenant_id   = data.vault_kv_secret_v2.auth_secret.data["project_id"]
-  password    = data.vault_kv_secret_v2.auth_secret.data["password"]
-  auth_url    = data.vault_kv_secret_v2.auth_secret.data["auth_url"]
-}
 
 # Define security group
-resource "openstack_networking_secgroup_v2" "glezova_tg_secgroup" {
+resource "openstack_networking_secgroup_v2" "boytsova_tg_secgroup" {
   name        = "boytsova_tg_secgroup"
   description = "Security group for ssh and http/https"
 }
@@ -66,7 +51,7 @@ resource "openstack_networking_secgroup_rule_v2" "https_rule" {
 
 # Configure an instance
 resource "openstack_compute_instance_v2" "boytsova_bot" {
-  name              = "glezova_bot_tf"
+  name              = "b_bot_tf"
   image_name        = var.image_name
   flavor_name       = var.flavor_name
   key_pair          = var.key_pair
