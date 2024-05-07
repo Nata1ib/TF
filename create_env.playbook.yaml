@@ -1,0 +1,68 @@
+- name: run local terraform
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Run terraform
+      terraform:
+        project_path: "./tf"
+        force_init: yes
+        state: present
+      register: trfrm
+
+    - name: Add host
+      add_host:
+        name: w_bot
+        groups: nodes
+        ansible_host: "{{ trfrm.outputs.instance_ip_addr.value }}"
+        ansible_ssh_private_key_file: ~/.ssh/id_rsa
+        ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
+
+- name: Wait for SSH port to be available
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Wait for w_bot port 22
+      wait_for:
+        host: "{{ trfrm.outputs.instance_ip_addr.value }}"
+        port: 22
+
+- name: Deploy Java Application
+  hosts: w_bot
+  tasks:
+    - block:   
+      - name: Update apt package cache and install JDK17
+        apt:
+          update_cache: yes
+          name: openjdk-17-jdk-headless
+          state: present
+        become: yes
+
+      - name: Copy jar archive
+        copy:
+          src: "{{ jar_path }}"
+          dest: /home/ubuntu/target
+        
+      - name: Copy application
+        copy:
+          src: "{{ service_path }}"
+          dest: /etc/systemd/system
+          mode: '0777'
+        become: yes
+
+      - name: Reload systemd
+        systemd:
+          daemon_reload: yes
+        become: yes
+        
+      - name: Start bot service
+        systemd:
+          name: bot.service
+          state: started
+        become: yes
+      
+      rescue:
+       - name: Clean up resources because of an error
+         terraform:
+           project_path: "./tf"
+           state: absent 
+         delegate_to: localhost
