@@ -9,7 +9,6 @@ required_version = ">= 0.14.0"
   }
 }
 
-
 # Define security group
 resource "openstack_networking_secgroup_v2" "boytsova_tg_secgroup" {
   name        = "boytsova_tg_secgroup"
