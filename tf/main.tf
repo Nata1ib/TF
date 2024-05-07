@@ -18,9 +18,6 @@ provider "openstack" {
   region = "RegionOne"
 }
 
-resource "openstack_networking_secgroup_v2" "sg" {
-  name        = "boytsova_bot"
-}
 
 # Define security group
 resource "openstack_networking_secgroup_v2" "boytsova_tg_secgroup" {
