@@ -13,6 +13,18 @@ provider "vault" {
 address = "http://localhost:8200"
 }
 
+data "vault_kv_secret_v2" "auth_secret" {
+  mount = "kv"
+  name  = "openstack-auth"
+}
+
+# Configure the OpenStack Provider
+provider "openstack" {
+  user_name   = data.vault_kv_secret_v2.auth_secret.data["username"]
+  tenant_id   = data.vault_kv_secret_v2.auth_secret.data["project_id"]
+  password    = data.vault_kv_secret_v2.auth_secret.data["password"]
+  auth_url    = data.vault_kv_secret_v2.auth_secret.data["auth_url"]
+}
 
 # Define security group
 resource "openstack_networking_secgroup_v2" "boytsova_tg_secgroup" {
