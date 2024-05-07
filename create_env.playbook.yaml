@@ -56,7 +56,7 @@
         
       - name: Start bot service
         systemd:
-          name: bot.service
+          name: my_java_app.service
           state: started
         become: yes
       
