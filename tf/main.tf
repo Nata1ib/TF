@@ -9,6 +9,11 @@ required_version = ">= 0.14.0"
   }
 }
 
+provider "vault" {
+address = "http://localhost:8200"
+}
+
+
 # Define security group
 resource "openstack_networking_secgroup_v2" "boytsova_tg_secgroup" {
   name        = "boytsova_tg_secgroup"
