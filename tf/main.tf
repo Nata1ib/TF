@@ -1,13 +1,13 @@
-# Define required providers
 terraform {
-required_version = ">= 0.14.0"
+  required_version = ">= 0.14.0"
   required_providers {
     openstack = {
       source  = "terraform-provider-openstack/openstack"
-      version = "~> 1.7.4"
+      version = "~> 1.39.0"
     }
   }
 }
+
 provider "openstack" {
   auth_url = "https://cloud.crplab.ru:5000"
   tenant_id = "a02aed7892fa45d0bc2bef3b8a08a6e9"
