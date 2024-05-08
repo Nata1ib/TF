@@ -11,7 +11,7 @@
 
     - name: Add host
       add_host:
-        name: w_bot
+        name: boytsova_bot
         groups: nodes
         ansible_host: "{{ trfrm.outputs.instance_ip_addr.value }}"
         ansible_ssh_private_key_file: ~/.ssh/id_rsa
@@ -21,13 +21,13 @@
   hosts: localhost
   connection: local
   tasks:
-    - name: Wait for w_bot port 22
+    - name: Wait for boytsova_bot port 22
       wait_for:
         host: "{{ trfrm.outputs.instance_ip_addr.value }}"
         port: 22
 
 - name: Deploy Java Application
-  hosts: w_bot
+  hosts: boytsova_bot
   tasks:
     - block:   
       - name: Update apt package cache and install JDK17
@@ -54,7 +54,7 @@
           daemon_reload: yes
         become: yes
         
-      - name: Start bot service
+      - name: Start my_java_app service
         systemd:
           name: my_java_app.service
           state: started
