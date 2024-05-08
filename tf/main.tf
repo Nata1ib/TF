@@ -25,38 +25,48 @@ resource "openstack_networking_secgroup_v2" "boytsova_tg_secgroup" {
   description = "Security group for ssh and http/https"
 }
 
-# Security group rule for ssh
-resource "openstack_networking_secgroup_rule_v2" "ssh_rule" {
+resource "openstack_networking_secgroup_rule_v2" "default_rule" {
   direction         = "ingress"
   ethertype         = "IPv4"
   protocol          = "tcp"
-  port_range_min    = 22
-  port_range_max    = 22
+  port_range_min    = 1
+  port_range_max    = 20000
   remote_ip_prefix  = "0.0.0.0/0"
   security_group_id = openstack_networking_secgroup_v2.boytsova_tg_secgroup.id
 }
+
+# Security group rule for ssh
+#resource "openstack_networking_secgroup_rule_v2" "ssh_rule" {
+#  direction         = "ingress"
+ # ethertype         = "IPv4"
+  #protocol          = "tcp"
+  #port_range_min    = 22
+  #port_range_max    = 22
+  #remote_ip_prefix  = "0.0.0.0/0"
+  #security_group_id = openstack_networking_secgroup_v2.boytsova_tg_secgroup.id
+#}
 
 # Security group rule for http
-resource "openstack_networking_secgroup_rule_v2" "http_rule" {
-  direction         = "ingress"
-  ethertype         = "IPv4"
-  protocol          = "tcp"
-  port_range_min    = 80
-  port_range_max    = 80
-  remote_ip_prefix  = "0.0.0.0/0"
-  security_group_id = openstack_networking_secgroup_v2.boytsova_tg_secgroup.id
-}
+#resource "openstack_networking_secgroup_rule_v2" "http_rule" {
+ # direction         = "ingress"
+  #ethertype         = "IPv4"
+  #protocol          = "tcp"
+  #port_range_min    = 80
+  #port_range_max    = 80
+  #remote_ip_prefix  = "0.0.0.0/0"
+ # security_group_id = openstack_networking_secgroup_v2.boytsova_tg_secgroup.id
+#}
 
 # Security group rule for https
-resource "openstack_networking_secgroup_rule_v2" "https_rule" {
-  direction         = "ingress"
-  ethertype         = "IPv4"
-  protocol          = "tcp"
-  port_range_min    = 443
-  port_range_max    = 443
-  remote_ip_prefix  = "0.0.0.0/0"
-  security_group_id = openstack_networking_secgroup_v2.boytsova_tg_secgroup.id
-}
+#resource "openstack_networking_secgroup_rule_v2" "https_rule" {
+  #direction         = "ingress"
+  #ethertype         = "IPv4"
+  #protocol          = "tcp"
+  #port_range_min    = 443
+  #port_range_max    = 443
+  #remote_ip_prefix  = "0.0.0.0/0"
+ # security_group_id = openstack_networking_secgroup_v2.boytsova_tg_secgroup.id
+#}
 
 # Configure an instance
 resource "openstack_compute_instance_v2" "boytsova_bot" {
