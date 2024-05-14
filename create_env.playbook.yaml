@@ -1,5 +1,5 @@
 - name: run local terraform
-  hosts: localhost
+  hosts: 127.0.0.1
   connection: local
   tasks:
     - name: Run terraform
@@ -9,60 +9,56 @@
         state: present
       register: trfrm
 
-    - name: Add host
+    - name: Add instance host
       add_host:
-        name: boytsova_bot
+        name: my_java_app
         groups: nodes
         ansible_host: "{{ trfrm.outputs.instance_ip_addr.value }}"
         ansible_ssh_private_key_file: ~/.ssh/id_rsa
         ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
 
-- name: Wait for SSH port to be available
-  hosts: localhost
+- name: Timeout for instance creating
+  hosts: 127.0.0.1
   connection: local
   tasks:
-    - name: Wait for boytsova_bot port 22
+    - name: Wait for a ssh port become available
       wait_for:
         host: "{{ trfrm.outputs.instance_ip_addr.value }}"
         port: 22
 
 - name: Deploy Java Application
-  hosts: boytsova_bot
+  hosts: my_java_app
   tasks:
     - block:   
-      - name: Update apt package cache and install JDK17
+      - name: Update apt cache and install jdk17
         apt:
           update_cache: yes
           name: openjdk-17-jdk-headless
           state: present
         become: yes
 
-      - name: Copy jar archive
+      - name: Copy artifacts
         copy:
           src: "{{ jar_path }}"
           dest: /home/ubuntu/target
         
-      - name: Copy application
+      - name: Configure Java app service
         copy:
           src: "{{ service_path }}"
           dest: /etc/systemd/system
           mode: '0777'
         become: yes
-
-      - name: Reload systemd
-        systemd:
-          daemon_reload: yes
-        become: yes
         
-      - name: Start my_java_app service
+      - name: Start Java app service
         systemd:
-          name: my_java_app.service
-          state: started
+          daemon_reload: true
+          name: my_java_app
+          state: restarted
         become: yes
-      
-      rescue:
+     
+       rescue:
        - name: Clean up resources because of an error
          terraform:
            project_path: "./tf"
            state: absent 
-         delegate_to: localhost
+         delegate_to: 127.0.0.1
