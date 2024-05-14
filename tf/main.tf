@@ -60,7 +60,7 @@ resource "openstack_networking_secgroup_rule_v2" "https_rule" {
 
 # Configure an instance
 resource "openstack_compute_instance_v2" "boytsova_bot" {
-  name              = "boytsova_bot"
+  name              = "boytsova_bot_tf"
   image_name        = var.image_name
   flavor_name       = var.flavor_name
   key_pair          = var.key_pair
